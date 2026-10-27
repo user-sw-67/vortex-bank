@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vortex Bank — Мобильный банк нового поколения и Web3-экосистема</title>
+  <meta name="description" content="Премиальный мобильный банкинг с доходностью до 18.5% годовых в рублях, кешбэком до 15% и встроенным криптокошельком с автоконвертацией.">
+
+  <!-- Иконка вкладки браузера (Favicon SVG + Fallback) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' fill='none'%3E%3Crect width='64' height='64' rx='18' fill='url(%23g)'/%3E%3Crect x='2' y='2' width='60' height='60' rx='16' stroke='white' stroke-opacity='0.28' stroke-width='2'/%3E%3Cpath d='M17 19L32 47L47 19H38.5L32 32.5L25.5 19H17Z' fill='white'/%3E%3Ccircle cx='32' cy='19' r='4.5' fill='%2310B981'/%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='64' y2='64' gradientUnits='userSpaceOnUse'%3E%3Cstop stop-color='%231E3A8A'/%3E%3Cstop offset='0.55' stop-color='%234F46E5'/%3E%3Cstop offset='1' stop-color='%2310B981'/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E">
+  <link rel="apple-touch-icon" href="favicon.svg">
+
+  <!-- Шрифты Inter и JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Фоновые световые сферы (Ambient Liquid Glow) -->
+  <div class="ambient-bg" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="grid-overlay"></div>
+  </div>
+
+  <!-- Глобальный стеклянный поповер для подсказок «Простыми словами» (?) -->
+  <div id="glassTooltipPortal" class="glass-tooltip-portal" role="tooltip" aria-hidden="true">
+    <div class="tooltip-top-bar">
+      <span class="tooltip-badge">💡 Простыми словами</span>
+      <span class="tooltip-close-hint">ESC</span>
+    </div>
+    <div class="tooltip-title" id="tooltipPortalTitle">Заголовок подсказки</div>
+    <div class="tooltip-text" id="tooltipPortalText">Описание простыми словами...</div>
+    <div class="tooltip-example" id="tooltipPortalExample"></div>
+  </div>
+
+  <!-- Всплывающее уведомление (Toast) -->
+  <div id="toast" class="toast" role="status" aria-live="polite">
+    <span class="toast-icon">✓</span>
+    <span id="toastMessage">Скопировано в буфер обмена</span>
+  </div>
+
+  <!-- ==================== ШАПКА (DYNAMIC ISLAND HEADER) ==================== -->
+  <header class="site-header" id="header">
+    <div class="container header-inner glass-pill">
+      <a href="#hero" class="logo" aria-label="Vortex Bank На главную">
+        <span class="logo-mark">
+          <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="36" height="36" rx="10" fill="url(#vortexGrad)"/>
+            <path d="M10 11L18 26L26 11H21.5L18 18.5L14.5 11H10Z" fill="white"/>
+            <circle cx="18" cy="11" r="2.2" fill="#10B981"/>
+            <defs>
+              <linearGradient id="vortexGrad" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#3B82F6"/>
+                <stop offset="0.55" stop-color="#6366F1"/>
+                <stop offset="1" stop-color="#10B981"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </span>
+        <span class="logo-text">Vortex<span class="logo-accent">Bank</span></span>
+      </a>
+
+      <nav class="main-nav" id="mainNav" aria-label="Основная навигация">
+        <a href="#features" class="nav-link">Преимущества</a>
+        <a href="#configurator" class="nav-link">Карты и тарифы</a>
+        <a href="#calculator" class="nav-link">Калькулятор</a>
+        <a href="#crypto-bridge" class="nav-link">Крипто-мост</a>
+        <a href="#faq" class="nav-link">Вопросы</a>
+      </nav>
+
+      <div class="header-actions">
+        <!-- Анимированный тумблер смены темы (Dark / Light) -->
+        <button class="theme-switch" id="themeToggle" type="button" aria-label="Переключить тему оформления" title="Сменить тему сайта">
+          <span class="theme-switch-track">
+            <span class="theme-icon theme-icon-moon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+              </svg>
+            </span>
+            <span class="theme-icon theme-icon-sun">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="5"/>
+                <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+              </svg>
+            </span>
+            <span class="theme-switch-thumb"></span>
+          </span>
+        </button>
+
+        <button class="btn btn-glass btn-sm hide-mobile" data-open-modal="onboardingModal">
+          <span class="status-dot"></span>
+          Как стать клиентом
+        </button>
+
+        <button class="btn btn-primary btn-sm" data-open-modal="orderModal">
+          <span>Оформить карту</span>
+        </button>
+
+        <!-- Мобильный бургер -->
+        <button class="burger-btn" id="burgerBtn" type="button" aria-label="Открыть меню" aria-expanded="false">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Задекорированное выпадающее мобильное меню -->
+    <div class="mobile-drawer glass-card" id="mobileDrawer">
+      <div class="mobile-drawer-header">
+        <span class="drawer-badge">Навигация по Vortex Bank</span>
+      </div>
+      <nav class="mobile-nav">
+        <a href="#features" class="mobile-nav-link">
+          <span class="m-nav-icon">✨</span>
+          <span>Преимущества банка</span>
+          <span class="m-nav-arrow">→</span>
+        </a>
+        <a href="#configurator" class="mobile-nav-link">
+          <span class="m-nav-icon">💳</span>
+          <span>Конфигуратор карт и тарифы</span>
+          <span class="m-nav-arrow">→</span>
+        </a>
+        <a href="#calculator" class="mobile-nav-link">
+          <span class="m-nav-icon">📈</span>
+          <span>Калькулятор доходности</span>
+          <span class="m-nav-arrow">→</span>
+        </a>
+        <a href="#crypto-bridge" class="mobile-nav-link">
+          <span class="m-nav-icon">🔄</span>
+          <span>Крипто-мост и обмен валют</span>
+          <span class="m-nav-arrow">→</span>
+        </a>
+        <a href="#faq" class="mobile-nav-link">
+          <span class="m-nav-icon">❓</span>
+          <span>Частые вопросы (FAQ)</span>
+          <span class="m-nav-arrow">→</span>
+        </a>
+      </nav>
+      <div class="mobile-drawer-actions">
+        <button class="btn btn-glass btn-block" data-open-modal="onboardingModal">Как стать клиентом (QR-код)</button>
+        <button class="btn btn-primary btn-block" data-open-modal="orderModal">Выпустить карту за 2 минуты</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ==================== HERO СЕКЦИЯ ==================== -->
+    <section class="hero-section" id="hero">
+      <div class="container hero-grid">
+        <div class="hero-content reveal">
+          <div class="hero-badge glass-pill">
+            <span class="badge-pulse"></span>
+            <span>Лицензия ЦБ РФ • Классический банкинг + Web3-мост</span>
+            <button type="button" class="help-tip"
+              data-tip-title="Что такое Web3-мост?"
+              data-tip-text="Это встроенный в банк безопасный переводчик между обычными рублями и цифровыми валютами (криптовалютой). Вам не нужно разбираться в сложных биржах — всё работает в одной кнопке как обычный обмен валют."
+              data-tip-example="Пример: храните цифровые доллары, а платите картой в обычной «Пятёрочке» в рублях.">?</button>
+          </div>
+
+          <h1 class="hero-title">
+            Классический банк <br>
+            <span class="text-gradient">со свободой криптоактивов</span>
+          </h1>
+
+          <p class="hero-subtitle">
+            Управляйте рублями, вкладами под <strong>18.5% годовых</strong> и цифровыми валютами
+            <strong>USDT, BTC, TON</strong>
+            <button type="button" class="help-tip"
+              data-tip-title="Что такое USDT, BTC и TON?"
+              data-tip-text="• USDT (Tether) — это цифровой доллар. Его курс всегда равен 1 обычному доллару США, он не скачет в цене.&#10;• BTC (Bitcoin) — главное цифровое золото мира.&#10;• TON (Toncoin) — быстрая криптовалюта экосистемы Telegram."
+              data-tip-example="Вы можете хранить часть сбережений в USDT, чтобы защитить их от инфляции.">?</button>
+            в едином стеклянном интерфейсе. Оплата в одно касание с мгновенной автоконвертацией.
+          </p>
+
+          <div class="hero-cta-group">
+            <button class="btn btn-primary btn-lg btn-shimmer" data-open-modal="onboardingModal">
+              <span>Стать клиентом</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </button>
+            <button class="btn btn-glass btn-lg" data-open-modal="orderModal">
+              <span>Заказать титановую карту</span>
+            </button>
+          </div>
+
+          <!-- Статистика в Hero с подсказками -->
+          <div class="hero-stats">
+            <div class="stat-item glass-card-mini">
+              <div class="stat-head-row">
+                <span class="stat-value mono">0 ₽</span>
+                <button type="button" class="help-tip"
+                  data-tip-title="Что значит переводы СБП за 0 ₽?"
+                  data-tip-text="СБП — это Система быстрых платежей от Центробанка РФ. Вы вводите только номер телефона друга или свой номер в другом банке, и деньги приходят за 1 секунду без копейки комиссии."
+                  data-tip-example="Лимит бесплатных переводов самому себе в другие банки — до 30 млн ₽ в месяц.">?</button>
+              </div>
+              <span class="stat-label">Обслуживание и переводы СБП</span>
+            </div>
+
+            <div class="stat-item glass-card-mini">
+              <div class="stat-head-row">
+                <span class="stat-value mono text-emerald">до 15%</span>
+                <button type="button" class="help-tip"
+                  data-tip-title="Как работает выбор валюты кешбэка?"
+                  data-tip-text="За каждую покупку по карте банк возвращает вам часть потраченных денег. В настройках приложения можно выбрать: получать возврат обычными рублями или сразу в цифровых долларах (USDT)."
+                  data-tip-example="Потратили 10 000 ₽ в ресторанах → получили до 1 500 ₽ обратно живыми деньгами, а не фантиками-баллами.">?</button>
+              </div>
+              <span class="stat-label">Кешбэк рублями или в USDT</span>
+            </div>
+
+            <div class="stat-item glass-card-mini">
+              <div class="stat-head-row">
+                <span class="stat-value mono text-blue">18.5%</span>
+                <button type="button" class="help-tip"
+                  data-tip-title="Чем накопительный счёт лучше обычного вклада?"
+                  data-tip-text="На обычном вкладе деньги «замораживаются» на полгода или год. А с накопительного счёта Vortex можно снимать любую сумму хоть каждый день без потери уже начисленных процентов!"
+                  data-tip-example="Проценты начисляются на остаток каждый день, а выплачиваются в конце месяца.">?</button>
+              </div>
+              <span class="stat-label">Накопительный счёт в ₽</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Правая колонка Hero: Интерактивная 3D-карта и виджет баланса -->
+        <div class="hero-visual reveal">
+          <div class="card-scene" id="heroCardScene">
+            <div class="bank-card-3d" id="heroCard3D" data-style="obsidian">
+              <div class="card-glare" id="heroCardGlare"></div>
+              <div class="card-top-row">
+                <div class="card-brand">
+                  <span class="card-logo-dot"></span>
+                  <span class="card-brand-name">VORTEX PRIVATE</span>
+                </div>
+                <span class="card-tier-badge">METAL • RUB / WEB3</span>
+              </div>
+
+              <div class="card-chip-row">
+                <div class="card-chip">
+                  <div class="chip-line"></div>
+                  <div class="chip-line"></div>
+                </div>
+                <svg class="nfc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M6 8.5a6.5 6.5 0 0 1 0 7M9.5 6a10 10 0 0 1 0 12M13 3.5a13.5 13.5 0 0 1 0 17"/>
+                </svg>
+              </div>
+
+              <div class="card-number-row mono" id="heroCardNumber">
+                <span>4276</span><span>8801</span><span>9420</span><span>7719</span>
+                <button class="copy-card-btn" id="copyCardBtn" type="button" title="Скопировать номер демо-карты">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2"/>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                  </svg>
+                </button>
+              </div>
+
+              <div class="card-bottom-row">
+                <div class="card-holder-box">
+                  <span class="card-meta-label">CARDHOLDER</span>
+                  <span class="card-holder-name mono" id="heroCardHolder">VLADIMIR ARCHITECT</span>
+                </div>
+                <div class="card-expiry-box">
+                  <span class="card-meta-label">VALID THRU</span>
+                  <span class="card-expiry mono">10/30</span>
+                </div>
+                <div class="card-network-logo">MIR • ∞</div>
+              </div>
+            </div>
+
+            <!-- Плавающие стеклянные мини-виджеты вокруг карты -->
+            <div class="floating-widget widget-balance glass-card">
+              <div class="widget-header">
+                <span class="widget-title">
+                  Мультивалютный счёт
+                  <button type="button" class="help-tip"
+                    data-tip-title="Что такое мультивалютный счёт?"
+                    data-tip-text="Это один общий кошелёк, внутри которого одновременно лежат рубли, доллары и криптовалюта. Переключаться между ними можно одним нажатием."
+                    data-tip-example="Нажмите на кнопку «₽ RUB ⇄ USDT» правее, чтобы пересчитать баланс!">?</button>
+                </span>
+                <button class="currency-pill mono" id="toggleBalanceCurrency" type="button" title="Переключить валюту отображения">₽ RUB ⇄ USDT</button>
+              </div>
+              <div class="widget-amount mono" id="liveHeroBalance">485 920,00 ₽</div>
+              <div class="widget-sub text-emerald">+14 250 ₽ кешбэк и проценты за месяц</div>
+            </div>
+
+            <div class="floating-widget widget-tx glass-card">
+              <div class="tx-icon">⚡</div>
+              <div class="tx-info">
+                <div class="tx-title">
+                  Автоконвертация USDT → ₽
+                  <button type="button" class="help-tip"
+                    data-tip-title="Как работает автоконвертация на кассе?"
+                    data-tip-text="Представьте: у вас на счёте 0 рублей, но лежит 100 цифровых долларов (USDT). Вы покупаете кофе за 300 ₽ — банк сам за долю секунды меняет ровно 3,11 USDT на 300 ₽ и оплачивает покупку."
+                    data-tip-example="Кассир в магазине видит обычную оплату рублевой картой.">?</button>
+                </div>
+                <div class="tx-desc">Оплата смартфоном • Курс биржи + 0%</div>
+              </div>
+              <div class="tx-sum mono text-emerald">0.15 сек</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== БЕГУЩАЯ СТРОКА КОТИРОВОК И СТАВОК ==================== -->
+    <div class="ticker-bar glass-strip" aria-label="Финансовые показатели в реальном времени">
+      <div class="container ticker-inner">
+        <div class="ticker-item">
+          <span class="ticker-name">Накопительный счёт ₽</span>
+          <span class="ticker-val mono text-emerald">18.5% годовых</span>
+        </div>
+        <div class="ticker-sep">•</div>
+        <div class="ticker-item">
+          <span class="ticker-name">СБП Переводы</span>
+          <span class="ticker-val mono">до 30 млн ₽ — 0 ₽</span>
+        </div>
+        <div class="ticker-sep">•</div>
+        <div class="ticker-item">
+          <span class="ticker-name">USDT / RUB</span>
+          <span class="ticker-val mono" id="tickerUsdt">96.40 ₽</span>
+        </div>
+        <div class="ticker-sep">•</div>
+        <div class="ticker-item">
+          <span class="ticker-name">BTC / USD</span>
+          <span class="ticker-val mono" id="tickerBtc">$94,820</span>
+        </div>
+        <div class="ticker-sep">•</div>
+        <div class="ticker-item">
+          <span class="ticker-name">TON / RUB</span>
+          <span class="ticker-val mono" id="tickerTon">524.00 ₽</span>
+        </div>
+        <div class="ticker-sep">•</div>
+        <div class="ticker-item">
+          <span class="ticker-name">Стейкинг USDT</span>
+          <span class="ticker-val mono text-blue">до 16.0% APY</span>
+          <button type="button" class="help-tip"
+            data-tip-title="Что означает аббревиатура APY?"
+            data-tip-text="APY (Annual Percentage Yield) — это годовая доходность вклада с учётом сложного процента (когда начисленные за месяц проценты сами начинают приносить доход в следующем месяце)."
+            data-tip-example="16% APY в USDT значит, что с 1 000 цифровых долларов за год вы заработаете +160 долларов сверху.">?</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== BENTO-СЕТКА ПРЕИМУЩЕСТВ (iOS STYLE) ==================== -->
+    <section class="section" id="features">
+      <div class="container">
+        <div class="section-header reveal">
+          <span class="section-eyebrow">Экосистема Vortex</span>
+          <h2 class="section-title">Надёжность классического банка.<br><span class="text-gradient">Скорость цифровых финансов.</span></h2>
+          <p class="section-desc">
+            Мы объединили привычные рублевые продукты со встроенным криптошлюзом. Никаких блокировок за P2P — все операции проходят официально через ликвидный шлюз банка.
+            <button type="button" class="help-tip"
+              data-tip-title="Почему P2P-переводы опасны, а шлюз банка — нет?"
+              data-tip-text="Когда люди покупают крипту «с рук» (P2P), им переводят деньги незнакомцы с сомнительных карт — из-за этого банки часто блокируют карты по закону 115-ФЗ. В Vortex Bank вы меняете валюту напрямую у банка официально и чисто."
+              data-tip-example="Никаких переводов третьим лицам и 100% защита от блокировок счёта.">?</button>
+          </p>
+        </div>
+
+        <div class="bento-grid">
+          <!-- Карточка 1: Широкая (Классический банкинг) -->
+          <article class="bento-card bento-span-2 glass-card reveal">
+            <div class="bento-badge">Приоритет №1 • Базовый банкинг</div>
+            <h3>
+              Бесплатное обслуживание и страховка вкладов АСВ
+              <button type="button" class="help-tip"
+                data-tip-title="Что такое государственная страховка АСВ?"
+                data-tip-text="Агентство по страхованию вкладов (АСВ) — государственная корпорация РФ, которая гарантирует сохранность ваших денег на банковских счетах на сумму до 1 400 000 рублей."
+                data-tip-example="Ваши рублевые деньги защищены законом точно так же, как в крупнейших госбанках.">?</button>
+            </h3>
+            <p>
+              Дебетовая и кредитная карта с бесплатным выпуском. Мгновенные переводы по номеру телефона через СБП, оплата ЖКХ, штрафов и госуслуг без комиссии. Вклады застрахованы на сумму до 1,4 млн ₽.
+            </p>
+            <div class="bento-visual-bars">
+              <div class="bar-item">
+                <div class="bar-label"><span>Комиссия за обслуживание карты</span><strong class="mono text-emerald">0 ₽ навсегда</strong></div>
+                <div class="bar-track"><div class="bar-fill fill-emerald" style="width: 100%"></div></div>
+              </div>
+              <div class="bar-item">
+                <div class="bar-label"><span>Кешбэк в 5 выбранных категориях</span><strong class="mono text-blue">до 15% ежемесячно</strong></div>
+                <div class="bar-track"><div class="bar-fill fill-blue" style="width: 88%"></div></div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Карточка 2: Защита -->
+          <article class="bento-card glass-card reveal">
+            <div class="bento-icon-wrap">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                <path d="m9 12 2 2 4-4"/>
+              </svg>
+            </div>
+            <h3>
+              Безопасность Tier-4 и FaceID
+              <button type="button" class="help-tip"
+                data-tip-title="Что значит уровень защиты Tier-4?"
+                data-tip-text="Tier-4 — это самый высокий в мире стандарт надёжности серверных центров (работают без сбоев 99,995% времени). А ключи доступа к счёту хранятся прямо в защищённом чипе вашего телефона (FaceID / TouchID)."
+                data-tip-example="Даже если злоумышленник узнает пароль от СМС, он не сможет перевести деньги без скана вашего лица.">?</button>
+            </h3>
+            <p>
+              Аппаратное шифрование ключей, биометрическое подтверждение транзакций и настраиваемые лимиты в один тап.
+            </p>
+            <button class="btn-link" data-open-modal="securityModal">Архитектура защиты →</button>
+          </article>
+
+          <!-- Карточка 3: Кешбэк -->
+          <article class="bento-card glass-card reveal">
+            <div class="bento-icon-wrap icon-emerald">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+                <polyline points="17 6 23 6 23 12"/>
+              </svg>
+            </div>
+            <h3>Кешбэк рублями или криптой</h3>
+            <p>
+              Выбирайте сами, в чём получать возврат за покупки в супермаркетах, кафе и АЗС: живыми рублями на счёт или автоматически в USDT / BTC.
+            </p>
+            <div class="cashback-pills">
+              <span class="mini-tag">Супермаркеты 7%</span>
+              <span class="mini-tag">Рестораны 10%</span>
+              <span class="mini-tag">IT-сервисы 15%</span>
+            </div>
+          </article>
+
+          <!-- Карточка 4: Широкая (Крипто-мост) -->
+          <article class="bento-card bento-span-2 glass-card reveal">
+            <div class="bento-badge badge-emerald">Приоритет №2 • Встроенный крипто-мост</div>
+            <h3>
+              Расплачивайтесь криптой в любом магазине у дома
+              <button type="button" class="help-tip"
+                data-tip-title="Нужно ли магазину принимать криптовалюту?"
+                data-tip-text="Нет! Магазин даже не знает, что у вас была криптовалюта. Вы просто прикладываете карту Vortex к обычному терминалу Сбера или Т-Банка, наш банк мгновенно обменивает нужную сумму в рубли и отправляет магазину."
+                data-tip-example="Работает в любом супермаркете, аптеке, метро или маркетплейсе.">?</button>
+            </h3>
+            <p>
+              Привяжите счёт к USDT или TON: когда вы прикладываете карту или смартфон к обычному терминалу на кассе, Vortex за 0,15 секунды конвертирует нужную сумму в рубли по биржевому курсу без скрытых наценок.
+            </p>
+            <div class="bridge-scheme">
+              <div class="scheme-node">
+                <span class="node-title mono">USDT / BTC / TON</span>
+                <span class="node-sub">Ваш криптокошелёк</span>
+              </div>
+              <div class="scheme-arrow">
+                <span class="arrow-line"></span>
+                <span class="arrow-badge mono">0.15 сек • 0% комиссия</span>
+              </div>
+              <div class="scheme-node">
+                <span class="node-title mono">Терминал оплаты ₽</span>
+                <span class="node-sub">Любой магазин РФ и мира</span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 3D-КОНФИГУРАТОР КАРТЫ И ТАРИФОВ ==================== -->
+    <section class="section" id="configurator">
+      <div class="container">
+        <div class="section-header reveal">
+          <span class="section-eyebrow">Кастомизация</span>
+          <h2 class="section-title">Соберите свою карту <span class="text-gradient">Vortex Glass</span></h2>
+          <p class="section-desc">
+            Выберите материал корпуса, платёжный контур и тариф. Введите своё имя — мы нанесём лазерную гравировку перед доставкой.
+          </p>
+        </div>
+
+        <div class="configurator-layout glass-card reveal">
+          <!-- Левая часть: живое превью карты -->
+          <div class="config-preview-col">
+            <div class="config-card-stage" id="configCardStage">
+              <div class="bank-card-3d config-card" id="configCard" data-style="obsidian">
+                <div class="card-glare" id="configCardGlare"></div>
+                <div class="card-top-row">
+                  <div class="card-brand">
+                    <span class="card-logo-dot"></span>
+                    <span class="card-brand-name" id="previewTariffTitle">VORTEX PRO</span>
+                  </div>
+                  <span class="card-tier-badge" id="previewMaterialBadge">OBSIDIAN GLASS</span>
+                </div>
+
+                <div class="card-chip-row">
+                  <div class="card-chip">
+                    <div class="chip-line"></div>
+                    <div class="chip-line"></div>
+                  </div>
+                  <span class="card-cashback-chip mono" id="previewCashbackBadge">CASHBACK 10%</span>
+                </div>
+
+                <div class="card-number-row mono">
+                  <span>5536</span><span>9142</span><span>0824</span><span>3091</span>
+                </div>
+
+                <div class="card-bottom-row">
+                  <div class="card-holder-box">
+                    <span class="card-meta-label">HOLDER NAME</span>
+                    <span class="card-holder-name mono" id="previewHolderName">VLADIMIR IVANOV</span>
+                  </div>
+                  <div class="card-expiry-box">
+                    <span class="card-meta-label">VALID</span>
+                    <span class="card-expiry mono">12/31</span>
+                  </div>
+                  <div class="card-network-logo" id="previewNetwork">MIR SUPREME</div>
+                </div>
+              </div>
+            </div>
+            <p class="config-hint">✨ Наведите курсор на карту, чтобы оценить 3D-преломление света</p>
+          </div>
+
+          <!-- Правая часть: контролы конфигуратора -->
+          <div class="config-controls-col">
+            <!-- 1. Тариф -->
+            <div class="config-group">
+              <label class="config-label">
+                <span>1. Выберите уровень тарифа</span>
+                <button type="button" class="help-tip"
+                  data-tip-title="Чем отличаются тарифы карт?"
+                  data-tip-text="• Standard — полностью бесплатная карта на каждый день (кешбэк 5%).&#10;• Vortex Pro — повышенный кешбэк 10%, бесплатный обмен крипты и ставка 18% по счёту.&#10;• Private Black — металлическая карта из титана, кешбэк 15% и бесплатные бизнес-залы в аэропортах."
+                  data-tip-example="Тариф можно поменять в приложении в любой момент в один клик.">?</button>
+              </label>
+              <div class="segmented-control" id="tariffSelector" role="radiogroup" aria-label="Тариф карты">
+                <button type="button" class="seg-btn" data-tariff="standard">Standard</button>
+                <button type="button" class="seg-btn active" data-tariff="pro">Vortex Pro</button>
+                <button type="button" class="seg-btn" data-tariff="black">Private Black</button>
+              </div>
+            </div>
+
+            <!-- 2. Дизайн / материал -->
+            <div class="config-group">
+              <label class="config-label">
+                <span>2. Материал и оттенок стекла</span>
+                <button type="button" class="help-tip"
+                  data-tip-title="Из какого материала сделана карта?"
+                  data-tip-text="Карты линейки Glass покрыты матовым закалённым композитом в стиле задней крышки iPhone Pro, а версия Silver Titanium изготавливается из настоящего фрезерованного металла с лазерной гравировкой."
+                  data-tip-example="Карта не царапается в кошельке и приятно тяжелит руку (вес 18 грамм).">?</button>
+              </label>
+              <div class="swatch-list" id="styleSelector">
+                <button type="button" class="swatch-btn active" data-style="obsidian" data-label="OBSIDIAN GLASS">
+                  <span class="swatch-circle swatch-obsidian"></span>
+                  <span>Obsidian Dark</span>
+                </button>
+                <button type="button" class="swatch-btn" data-style="emerald" data-label="LIQUID EMERALD">
+                  <span class="swatch-circle swatch-emerald"></span>
+                  <span>Cyber Emerald</span>
+                </button>
+                <button type="button" class="swatch-btn" data-style="aurora" data-label="AURORA NEON">
+                  <span class="swatch-circle swatch-aurora"></span>
+                  <span>Indigo Aurora</span>
+                </button>
+                <button type="button" class="swatch-btn" data-style="titanium" data-label="WHITE TITANIUM">
+                  <span class="swatch-circle swatch-titanium"></span>
+                  <span>Silver Titanium</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- 3. Имя держателя и платёжная система -->
+            <div class="config-row-2">
+              <div class="config-group">
+                <label class="config-label" for="holderNameInput">
+                  <span>3. Гравировка имени</span>
+                  <button type="button" class="help-tip"
+                    data-tip-title="Зачем нужна гравировка имени?"
+                    data-tip-text="Мы нанесём ваше имя или никнейм лазером прямо на лицевую сторону карты. Попробуйте вписать своё имя в поле ниже — оно сразу появится на 3D-макете!"
+                    data-tip-example="По желанию можно выпустить и полностью безымянную карту для максимальной приватности.">?</button>
+                </label>
+                <input type="text" id="holderNameInput" class="glass-input mono" maxlength="22" value="VLADIMIR IVANOV" placeholder="YOUR NAME">
+              </div>
+
+              <div class="config-group">
+                <label class="config-label" for="networkSelect">
+                  <span>4. Платёжный контур</span>
+                  <button type="button" class="help-tip"
+                    data-tip-title="Какую платёжную систему выбрать?"
+                    data-tip-text="• МИР Supreme — идеально работает по всей России, во Вьетнаме, Беларуси и Турции.&#10;• Visa Global — зарубежная мультивалютная карта для поездок по Европе, США и оплаты подписок (Netflix, Steam, ChatGPT, Spotify).&#10;• UnionPay — принимается в Азии, ОАЭ и 150+ странах."
+                    data-tip-example="В приложении можно выпустить сразу две карты разных систем бесплатно.">?</button>
+                </label>
+                <!-- Этот select автоматически превращается в кастомный стеклянный дропдаун -->
+                <select id="networkSelect" class="glass-input custom-glass-select">
+                  <option value="MIR SUPREME" data-icon="🇷🇺" data-sub="РФ и дружественные страны">МИР Supreme</option>
+                  <option value="VISA PLATINUM" data-icon="🌍" data-sub="Оплата по всему миру и подписки">Visa Global</option>
+                  <option value="UNIONPAY GOLD" data-icon="🌏" data-sub="Азия, ОАЭ и Европа">UnionPay Diamond</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Динамические параметры выбранного тарифа -->
+            <div class="tariff-specs glass-card-mini" id="tariffSpecsBox">
+              <div class="spec-col">
+                <span class="spec-label">Обслуживание</span>
+                <strong class="spec-val mono" id="specPrice">0 ₽ (при обороте от 30 000 ₽)</strong>
+              </div>
+              <div class="spec-col">
+                <span class="spec-label">Кешбэк и бонусы</span>
+                <strong class="spec-val mono text-emerald" id="specCashback">до 10% в ₽ или USDT</strong>
+              </div>
+              <div class="spec-col">
+                <span class="spec-label">Лимит СБП и снятия</span>
+                <strong class="spec-val mono" id="specLimit">до 1 500 000 ₽ / мес без комиссии</strong>
+              </div>
+            </div>
+
+            <div class="config-footer-btns">
+              <button type="button" class="btn btn-primary btn-lg" id="orderConfiguredCardBtn">
+                Заказать эту конфигурацию
+              </button>
+              <button type="button" class="btn btn-glass" data-open-modal="tariffsModal">
+                Сравнить все тарифы
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== ИНТЕРАКТИВНЫЙ ФИНАНСОВЫЙ КАЛЬКУЛЯТОР ==================== -->
+    <section class="section" id="calculator">
+      <div class="container">
+        <div class="section-header reveal">
+          <span class="section-eyebrow">Доходность капитала</span>
+          <h2 class="section-title">Рассчитайте выгоду: <span class="text-gradient">Рублёвый вклад или DeFi-стейкинг</span></h2>
+          <p class="section-desc">
+            Переключайтесь между классическим банковским счётом с государственной страховкой и доходными пулами в стейблкоинах.
+            <button type="button" class="help-tip"
+              data-tip-title="Что такое DeFi-стейкинг простыми словами?"
+              data-tip-text="Это полный аналог банковского накопительного вклада, но только для криптовалюты (например, цифровых долларов USDT). Вы кладёте монеты под процент и получаете пассивный доход каждый месяц."
+              data-tip-example="В отличие от обычных банков, где ставка по долларам 0–1%, в стейкинге USDT вы получаете до 16% годовых в валюте!">?</button>
+          </p>
+        </div>
+
+        <div class="calc-wrapper glass-card reveal">
+          <!-- Переключатель режимов калькулятора -->
+          <div class="calc-mode-tabs" role="tablist">
+            <button type="button" class="calc-tab active" data-calc-mode="fiat" role="tab" aria-selected="true">
+              <span class="tab-badge">Классика</span>
+              Накопительный вклад в ₽ (до 18.5%)
+            </button>
+            <button type="button" class="calc-tab" data-calc-mode="crypto" role="tab" aria-selected="false">
+              <span class="tab-badge badge-emerald">Web3</span>
+              Крипто-стейкинг USDT / TON / ETH
+            </button>
+          </div>
+
+          <div class="calc-body">
+            <!-- Левая часть: Ползунки и настройки -->
+            <div class="calc-inputs">
+              <!-- Выбор криптоактива (показывается только в режиме Crypto) -->
+              <div class="crypto-asset-picker hidden" id="cryptoAssetPicker">
+                <span class="config-label">
+                  Выберите валюту для стейкинга:
+                  <button type="button" class="help-tip"
+                    data-tip-title="Какую монету лучше выбрать для стейкинга?"
+                    data-tip-text="• USDT (16% годовых) — идеальный выбор без риска скачков курса, так как 1 USDT всегда равен 1 доллару США.&#10;• TON, ETH и BTC подходят тем, кто хочет копить саму криптовалюту и дополнительно получать на неё проценты."
+                    data-tip-example="Калькулятор автоматически пересчитает вашу прибыль в рубли по текущему курсу.">?</button>
+                </span>
+                <div class="asset-pills">
+                  <button type="button" class="asset-pill active" data-asset="USDT" data-apy="16.0" data-rate="96.4">
+                    <strong>USDT</strong> <span>16.0% APY</span>
+                  </button>
+                  <button type="button" class="asset-pill" data-asset="TON" data-apy="11.5" data-rate="524">
+                    <strong>TON</strong> <span>11.5% APY</span>
+                  </button>
+                  <button type="button" class="asset-pill" data-asset="ETH" data-apy="6.8" data-rate="265000">
+                    <strong>ETH</strong> <span>6.8% APY</span>
+                  </button>
+                  <button type="button" class="asset-pill" data-asset="BTC" data-apy="4.5" data-rate="9140000">
+                    <strong>BTC</strong> <span>4.5% APY</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Ползунок 1: Сумма -->
+              <div class="slider-group">
+                <div class="slider-header">
+                  <label for="calcAmountRange" id="calcAmountLabel">Сумма на старте</label>
+                  <span class="slider-val mono" id="calcAmountDisplay">300 000 ₽</span>
+                </div>
+                <input type="range" id="calcAmountRange" class="ios-range" min="10000" max="5000000" step="10000" value="300000">
+                <div class="slider-limits mono">
+                  <span id="calcMinLabel">10 000 ₽</span>
+                  <span id="calcMaxLabel">5 000 000 ₽</span>
+                </div>
+              </div>
+
+              <!-- Ползунок 2: Срок -->
+              <div class="slider-group">
+                <div class="slider-header">
+                  <label for="calcTermRange">Срок накопления</label>
+                  <span class="slider-val mono" id="calcTermDisplay">12 мес.</span>
+                </div>
+                <input type="range" id="calcTermRange" class="ios-range" min="1" max="36" step="1" value="12">
+                <div class="slider-limits mono">
+                  <span>1 мес.</span>
+                  <span>12 мес.</span>
+                  <span>24 мес.</span>
+                  <span>36 мес.</span>
+                </div>
+              </div>
+
+              <!-- Ползунок 3: Ежемесячное пополнение -->
+              <div class="slider-group">
+                <div class="slider-header">
+                  <label for="calcMonthlyRange">
+                    Ежемесячное пополнение
+                    <button type="button" class="help-tip"
+                      data-tip-title="Зачем нужно ежемесячное пополнение?"
+                      data-tip-text="Если откладывать на счёт даже небольшую сумму с каждой зарплаты (например, по 10–15 тысяч ₽), итоговый капитал растёт в разы быстрее за счёт сложного процента."
+                      data-tip-example="В приложении можно включить автопополнение — например, переводить 5% от каждого поступления.">?</button>
+                  </label>
+                  <span class="slider-val mono" id="calcMonthlyDisplay">15 000 ₽</span>
+                </div>
+                <input type="range" id="calcMonthlyRange" class="ios-range" min="0" max="300000" step="5000" value="15000">
+                <div class="slider-limits mono">
+                  <span>Без пополнения</span>
+                  <span id="calcMonthlyMaxLabel">300 000 ₽ / мес</span>
+                </div>
+              </div>
+
+              <!-- Чекбокс капитализации -->
+              <div class="checkbox-with-help">
+                <label class="ios-checkbox-row">
+                  <input type="checkbox" id="calcCompoundCheck" checked>
+                  <span class="ios-Checkmark"></span>
+                  <span>Ежемесячная капитализация процентов (Auto-Compound)</span>
+                </label>
+                <button type="button" class="help-tip"
+                  data-tip-title="Что такое капитализация процентов (Auto-Compound)?"
+                  data-tip-text="Простыми словами — это «проценты на проценты». В конце каждого месяца заработанные проценты не лежат мёртвым грузом, а прибавляются к вашему вкладу. В следующем месяце процент начисляется уже на увеличенную сумму!"
+                  data-tip-example="Попробуйте снять и поставить галочку — увидите, как вырастет ваш чистый доход справа.">?</button>
+              </div>
+            </div>
+
+            <!-- Правая часть: Результат расчёта -->
+            <div class="calc-results glass-card-mini">
+              <div class="result-top">
+                <span class="result-caption">Итоговая сумма к концу срока</span>
+                <div class="result-total mono" id="calcTotalOutput">547 892 ₽</div>
+                <div class="result-sub mono text-emerald" id="calcSecondaryOutput">Ставка: 18.5% годовых • Доход застрахован</div>
+              </div>
+
+              <!-- Прогресс-бар соотношения тела вклада и прибыли -->
+              <div class="profit-visual-bar" title="Соотношение ваших вложений и начисленных процентов">
+                <div class="profit-bar-principal" id="barPrincipal" style="width: 78%"></div>
+                <div class="profit-bar-interest" id="barInterest" style="width: 22%"></div>
+              </div>
+
+              <div class="result-breakdown">
+                <div class="breakdown-item">
+                  <span class="dot dot-principal"></span>
+                  <span class="bd-label">Лично внесено вами:</span>
+                  <strong class="bd-val mono" id="calcInvestedOutput">465 000 ₽</strong>
+                </div>
+                <div class="breakdown-item">
+                  <span class="dot dot-interest"></span>
+                  <span class="bd-label">Чистая прибыль сверху (%):</span>
+                  <strong class="bd-val mono text-emerald" id="calcProfitOutput">+82 892 ₽</strong>
+                </div>
+              </div>
+
+              <button type="button" class="btn btn-primary btn-block btn-shimmer" data-open-modal="onboardingModal">
+                Открыть счёт и зафиксировать ставку
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== КРИПТО-МОСТ И ЖИВОЙ КОНВЕРТЕР ==================== -->
+    <section class="section" id="crypto-bridge">
+      <div class="container bridge-grid">
+        <div class="bridge-info reveal">
+          <span class="section-eyebrow">Web3 Интеграция</span>
+          <h2 class="section-title">Мгновенный обмен <span class="text-gradient">Фиат ⇄ Криптовалюта</span></h2>
+          <p class="section-desc">
+            Забудьте про рискованные переводы незнакомым людям и блокировки карт. Обменивайте обычные деньги (фиат)
+            <button type="button" class="help-tip"
+              data-tip-title="Что такое «Фиат» (Фиатные деньги)?"
+              data-tip-text="Фиат — это обычные государственные деньги, которыми мы пользуемся каждый день: российские рубли (₽), доллары США ($), евро (€)."
+              data-tip-example="Слово «Фиат ⇄ Крипта» просто означает обмен обычных рублей на цифровые монеты и обратно.">?</button>
+            на USDT, Bitcoin и Toncoin напрямую внутри банковского приложения за 1 секунду.
+          </p>
+
+          <ul class="feature-checklist">
+            <li>
+              <span class="check-icon">✓</span>
+              <div>
+                <strong>
+                  Официальный банковский клиринг
+                  <button type="button" class="help-tip"
+                    data-tip-title="Что такое банковский клиринг?"
+                    data-tip-text="Это прямая система расчётов внутри самого банка без посредников. Вы покупаете валюту непосредственно у резервного фонда Vortex Bank, поэтому сделка абсолютно прозрачна для закона."
+                    data-tip-example="В выписке по счёту операция отображается как официальный валютный обмен.">?</button>
+                </strong>
+                <p>Все операции проходят через верифицированный пул ликвидности без участия третьих лиц.</p>
+              </div>
+            </li>
+            <li>
+              <span class="check-icon">✓</span>
+              <div>
+                <strong>
+                  Холодное мультиподписное хранение (HSM)
+                  <button type="button" class="help-tip"
+                    data-tip-title="Что такое холодное хранение и мультиподпись?"
+                    data-tip-text="«Холодный кошелёк» — это физический сейф-накопитель, физически отключённый от интернета. А «мультиподпись» означает, что для движения средств нужны одновременно 3 разных электронных ключа (ваш телефон, сервер банка и модуль безопасности)."
+                    data-tip-example="Украсть средства через интернет технически невозможно.">?</button>
+                </strong>
+                <p>95% цифровых активов клиентов застрахованы и хранятся на аппаратных модулях HSM.</p>
+              </div>
+            </li>
+            <li>
+              <span class="check-icon">✓</span>
+              <div>
+                <strong>
+                  Вывод на внешние кошельки 24/7
+                  <button type="button" class="help-tip"
+                    data-tip-title="Что такое сети TRC-20, TON и ERC-20?"
+                    data-tip-text="Это «дороги» (блокчейн-сети), по которым пересылается криптовалюта между кошельками. Сети TON и TRC-20 — самые дешёвые и быстрые (перевод идёт 3 секунды)."
+                    data-tip-example="Вы можете в любой момент перевести USDT другу в Telegram Wallet или на биржу.">?</button>
+                </strong>
+                <p>Поддержка сетей TRC-20, TON, ERC-20, Arbitrum и Solana с минимальной комиссией сети.</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Виджет быстрого обмена (Swap) с кастомными стеклянными выпадающими списками -->
+        <div class="swap-widget glass-card reveal">
+          <div class="swap-header">
+            <h3>
+              Быстрый конвертер Vortex Swap
+              <button type="button" class="help-tip"
+                data-tip-title="Как работает конвертер Vortex Swap?"
+                data-tip-text="Впишите любую сумму в верхнее поле и выберите валюту из выпадающего меню — калькулятор мгновенно покажет, сколько вы получите по живому биржевому курсу без скрытых комиссий."
+                data-tip-example="Нажмите на круглую кнопку со стрелками посередине, чтобы поменять направление обмена!">?</button>
+            </h3>
+            <span class="swap-rate-badge mono" id="swapLiveRate">1 USDT = 96.40 ₽</span>
+          </div>
+
+          <div class="swap-box">
+            <div class="swap-label-row">
+              <span>Вы отдаёте</span>
+              <span class="mono text-emerald">Комиссия банка: 0%</span>
+            </div>
+            <div class="swap-input-row">
+              <input type="number" id="swapFromInput" class="swap-input mono" value="50000" min="1">
+              <select id="swapFromCurrency" class="swap-select custom-glass-select mono">
+                <option value="RUB" data-icon="₽" data-sub="Российский рубль" selected>₽ RUB</option>
+                <option value="USDT" data-icon="₮" data-sub="Цифровой доллар">₮ USDT</option>
+                <option value="BTC" data-icon="₿" data-sub="Bitcoin">₿ BTC</option>
+                <option value="TON" data-icon="💎" data-sub="Toncoin">💎 TON</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="swap-divider">
+            <button type="button" class="swap-reverse-btn" id="swapReverseBtn" aria-label="Поменять валюты местами" title="Поменять валюты местами">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4"/>
+              </svg>
+            </button>
+          </div>
+
+          <div class="swap-box">
+            <div class="swap-label-row">
+              <span>Вы получаете (точный расчёт)</span>
+              <span class="text-emerald mono">⚡ Зачисление за 1 сек</span>
+            </div>
+            <div class="swap-input-row">
+              <input type="text" id="swapToOutput" class="swap-input mono" value="518.67" readonly>
+              <select id="swapToCurrency" class="swap-select custom-glass-select mono">
+                <option value="USDT" data-icon="₮" data-sub="Цифровой доллар" selected>₮ USDT</option>
+                <option value="RUB" data-icon="₽" data-sub="Российский рубль">₽ RUB</option>
+                <option value="TON" data-icon="💎" data-sub="Toncoin">💎 TON</option>
+                <option value="BTC" data-icon="₿" data-sub="Bitcoin">₿ BTC</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="button" class="btn btn-primary btn-block btn-lg" data-open-modal="onboardingModal">
+            Открыть крипто-рублёвый счёт
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== ЧАСТЫЕ ВОПРОСЫ (FAQ АККОРДЕОН) ==================== -->
+    <section class="section" id="faq">
+      <div class="container faq-container">
+        <div class="section-header reveal">
+          <span class="section-eyebrow">База знаний</span>
+          <h2 class="section-title">Частые вопросы о <span class="text-gradient">Vortex Bank</span></h2>
+          <p class="section-desc">Нажмите на любой вопрос, чтобы раскрыть подробный ответ простыми словами.</p>
+        </div>
+
+        <div class="faq-list reveal" id="faqAccordion">
+          <div class="faq-item glass-card">
+            <button class="faq-question" type="button" aria-expanded="false">
+              <span>Как получить карту и начать пользоваться банком?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <p>
+                Достаточно оставить заявку на сайте или отсканировать QR-код в окне «Как стать клиентом». Виртуальная карта в рублях и мультивалютный кошелёк открываются мгновенно после авторизации, а физическую титановую карту наш представитель доставит бесплатно на следующий день.
+              </p>
+            </div>
+          </div>
+
+          <div class="faq-item glass-card">
+            <button class="faq-question" type="button" aria-expanded="false">
+              <span>Как работает автоконвертация криптовалюты при оплате на кассе?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <p>
+                В приложении Vortex вы можете выбрать основной источник списания — рублевый счёт или криптобаланс (например, USDT). Если на рублевом счёте недостаточно средств или выбран режим криптооплаты, банк автоматически конвертирует точную сумму чека в рубли в момент прикладывания карты к терминалу.
+              </p>
+            </div>
+          </div>
+
+          <div class="faq-item glass-card">
+            <button class="faq-question" type="button" aria-expanded="false">
+              <span>Защищены ли мои рублёвые вклады и криптоактивы?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <p>
+                Рублевые счета и накопительные вклады застрахованы в соответствии со стандартами банковского регулирования до 1 400 000 ₽. Криптовалютные резервы обеспечены в соотношении 1:1 (Proof-of-Reserves) и хранятся на изолированных холодных мультиподписных кошельках.
+              </p>
+            </div>
+          </div>
+
+          <div class="faq-item glass-card">
+            <button class="faq-question" type="button" aria-expanded="false">
+              <span>Действительно ли обслуживание карты полностью бесплатное?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <p>
+                На тарифе Standard обслуживание стоит 0 ₽ без каких-либо условий. На продвинутом тарифе Vortex Pro обслуживание также бесплатно при сумме покупок от 30 000 ₽ в месяц или неснижаемом остатке от 100 000 ₽.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Финальный CTA-баннер -->
+        <div class="cta-banner glass-card reveal">
+          <div class="cta-banner-text">
+            <h3>Готовы перейти на банкинг нового поколения?</h3>
+            <p>Откройте счёт за 2 минуты и получите приветственный бонус <strong>+1 000 ₽ и 10 USDT</strong> по промокоду <code class="mono">VORTEX2026</code>.</p>
+          </div>
+          <div class="cta-banner-btns">
+            <button type="button" class="btn btn-primary btn-lg btn-shimmer" data-open-modal="onboardingModal">
+              Как стать клиентом (QR)
+            </button>
+            <button type="button" class="btn btn-glass btn-lg" data-open-modal="orderModal">
+              Оформить заявку онлайн
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ==================== ПОДВАЛ (FOOTER) ==================== -->
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a href="#hero" class="logo">
+          <span class="logo-text">Vortex<span class="logo-accent">Bank</span></span>
+        </a>
+        <p class="footer-desc">
+          АО «Вортекс Финанс Банк». Генеральная лицензия ЦБ РФ № 3948 (учебный демонстрационный проект курсовой работы).
+        </p>
+        <div class="footer-status mono">
+          <span class="status-dot"></span> Все системы и шлюзы работают штатно (99.98% Uptime)
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Частным лицам</h4>
+        <a href="#configurator">Дебетовая карта Vortex Glass</a>
+        <a href="#calculator">Накопительный счёт 18.5%</a>
+        <a href="#crypto-bridge">Криптокошелёк и стейкинг</a>
+        <a href="#" data-open-modal="tariffsModal">Тарифы и лимиты</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>Инструменты и защита</h4>
+        <a href="#" data-open-modal="onboardingModal">Скачать приложение (QR)</a>
+        <a href="#" data-open-modal="securityModal">Безопасность Tier-4</a>
+        <a href="#faq">Частые вопросы</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>Контакты 24/7</h4>
+        <p class="mono">8 (800) 555-80-90</p>
+        <p class="mono">support@vortexbank.ru</p>
+        <p class="footer-copy">© 2026 Vortex Bank. Все права защищены.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- =========================================================================
+       МОДАЛЬНОЕ ОКНО №1 (ГЛАВНОЕ): КАК СТАТЬ КЛИЕНТОМ + QR-КОД + ИНСТРУКЦИЯ
+       ========================================================================= -->
+  <div class="modal-backdrop" id="onboardingModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="onboardingModalTitle">
+    <div class="modal-window modal-lg glass-card">
+      <button type="button" class="modal-close" data-close-modal aria-label="Закрыть окно">✕</button>
+
+      <div class="modal-header">
+        <span class="section-eyebrow">Быстрый старт за 2 минуты</span>
+        <h3 id="onboardingModalTitle">Как стать клиентом <span class="text-gradient">Vortex Bank</span> и начать пользоваться</h3>
+        <p>Выберите удобный способ подключения: через мобильное приложение по QR-коду или онлайн-заявку в браузере.</p>
+      </div>
+
+      <div class="onboarding-grid">
+        <!-- Левая колонка: 3 шага онбординга и промо-бонус -->
+        <div class="onboarding-steps">
+          <div class="step-card glass-card-mini">
+            <div class="step-num mono">01</div>
+            <div class="step-body">
+              <h4>Установите приложение или заполните анкету</h4>
+              <p>Отсканируйте QR-код камерой смартфона (iOS / Android) или нажмите «Оформить на сайте». Авторизация через Госуслуги или по паспорту занимает 90 секунд.</p>
+            </div>
+          </div>
+
+          <div class="step-card glass-card-mini">
+            <div class="step-num mono">02</div>
+            <div class="step-body">
+              <h4>Мгновенно активируйте виртуальную карту и кошелёк</h4>
+              <p>Сразу после регистрации вам доступны рублевый счёт, переводы по СБП, накопительный счёт под 18.5% и мультисетевой криптокошелёк (USDT, BTC, TON).</p>
+            </div>
+          </div>
+
+          <div class="step-card glass-card-mini">
+            <div class="step-num mono">03</div>
+            <div class="step-body">
+              <h4>Получите титановую карту с бесплатной доставкой</h4>
+              <p>Курьер привезёт физическую карту с вашей гравировкой в удобное время. Пополните счёт от 1 000 ₽ и получите бонус для новых клиентов.</p>
+            </div>
+          </div>
+
+          <!-- Бонусный промокод -->
+          <div class="promo-box glass-card-mini">
+            <div>
+              <span class="promo-label">Приветственный промокод (+1 000 ₽ и 10 USDT):</span>
+              <strong class="promo-code mono" id="promoCodeText">VORTEX2026</strong>
+            </div>
+            <button type="button" class="btn btn-glass btn-sm" id="copyPromoBtn">Скопировать код</button>
+          </div>
+        </div>
+
+        <!-- Правая колонка: Интерактивный QR-код с анимацией сканирования -->
+        <div class="onboarding-qr-col glass-card-mini">
+          <div class="qr-frame">
+            <div class="qr-laser"></div>
+            <svg class="qr-svg" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="QR код для скачивания приложения Vortex Bank">
+              <rect width="200" height="200" rx="18" fill="#0B0F19"/>
+              <rect x="18" y="18" width="46" height="46" rx="8" stroke="#3B82F6" stroke-width="6"/>
+              <rect x="30" y="30" width="22" height="22" rx="4" fill="#10B981"/>
+              <rect x="136" y="18" width="46" height="46" rx="8" stroke="#3B82F6" stroke-width="6"/>
+              <rect x="148" y="30" width="22" height="22" rx="4" fill="#10B981"/>
+              <rect x="18" y="136" width="46" height="46" rx="8" stroke="#3B82F6" stroke-width="6"/>
+              <rect x="30" y="148" width="22" height="22" rx="4" fill="#10B981"/>
+              <g fill="#E2E8F0">
+                <rect x="76" y="18" width="10" height="10" rx="2"/>
+                <rect x="92" y="18" width="10" height="22" rx="2"/>
+                <rect x="110" y="18" width="14" height="10" rx="2"/>
+                <rect x="76" y="36" width="10" height="18" rx="2"/>
+                <rect x="110" y="36" width="10" height="26" rx="2"/>
+                <rect x="18" y="76" width="22" height="10" rx="2"/>
+                <rect x="48" y="76" width="16" height="10" rx="2"/>
+                <rect x="18" y="94" width="10" height="24" rx="2"/>
+                <rect x="36" y="94" width="20" height="10" rx="2"/>
+                <rect x="44" y="112" width="12" height="12" rx="2"/>
+                <rect x="136" y="76" width="14" height="10" rx="2"/>
+                <rect x="158" y="76" width="24" height="10" rx="2"/>
+                <rect x="142" y="94" width="16" height="16" rx="2"/>
+                <rect x="168" y="94" width="14" height="28" rx="2"/>
+                <rect x="76" y="136" width="18" height="10" rx="2"/>
+                <rect x="102" y="136" width="20" height="10" rx="2"/>
+                <rect x="76" y="154" width="10" height="28" rx="2"/>
+                <rect x="94" y="154" width="24" height="12" rx="2"/>
+                <rect x="126" y="150" width="16" height="16" rx="2"/>
+                <rect x="150" y="140" width="32" height="12" rx="2"/>
+                <rect x="148" y="162" width="14" height="20" rx="2"/>
+                <rect x="170" y="162" width="12" height="20" rx="2"/>
+              </g>
+              <rect x="74" y="74" width="52" height="52" rx="14" fill="#111827" stroke="#6366F1" stroke-width="3"/>
+              <path d="M88 86L100 112L112 86H105L100 98L95 86H88Z" fill="#FFFFFF"/>
+              <circle cx="100" cy="86" r="3" fill="#10B981"/>
+            </svg>
+          </div>
+
+          <div class="qr-caption">
+            <strong>Наведите камеру смартфона</strong>
+            <span>Прямая загрузка Vortex App v4.8 (iOS / Android / PWA)</span>
+          </div>
+
+          <div class="store-badges">
+            <span class="store-pill"> App Store / PWA</span>
+            <span class="store-pill">🤖 Android APK</span>
+            <span class="store-pill">🇷🇺 RuStore</span>
+          </div>
+
+          <button type="button" class="btn btn-primary btn-block" id="switchToOrderModalBtn">
+            Оформить карту прямо на сайте →
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       МОДАЛЬНОЕ ОКНО №2: ФОРМА ЗАЯВКИ НА ВЫПУСК КАРТЫ
+       ========================================================================= -->
+  <div class="modal-backdrop" id="orderModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="orderModalTitle">
+    <div class="modal-window glass-card">
+      <button type="button" class="modal-close" data-close-modal aria-label="Закрыть окно">✕</button>
+
+      <div id="orderFormContainer">
+        <div class="modal-header">
+          <span class="section-eyebrow">Онлайн-анкета</span>
+          <h3 id="orderModalTitle">Выпуск карты <span class="text-gradient">Vortex Bank</span></h3>
+          <p>Заполните данные — виртуальная карта откроется сразу, а пластик привезёт курьер.</p>
+        </div>
+
+        <form id="cardOrderForm" class="order-form" novalidate>
+          <div class="form-group">
+            <label for="clientName">ФИО полностью *</label>
+            <input type="text" id="clientName" class="glass-input" placeholder="Иванов Владимир Александрович" required>
+            <span class="field-error" id="nameError">Введите имя и фамилию (минимум 3 символа)</span>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="clientPhone">Мобильный телефон *</label>
+              <input type="tel" id="clientPhone" class="glass-input mono" placeholder="+7 (999) 000-00-00" required>
+              <span class="field-error" id="phoneError">Введите корректный номер РФ</span>
+            </div>
+
+            <div class="form-group">
+              <label for="clientEmail">Электронная почта *</label>
+              <input type="email" id="clientEmail" class="glass-input" placeholder="vladimir@example.com" required>
+              <span class="field-error" id="emailError">Укажите корректный email</span>
+            </div>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="modalTariffSelect">Выбранный тариф</label>
+              <select id="modalTariffSelect" class="glass-input custom-glass-select">
+                <option value="Standard" data-icon="💳" data-sub="0 ₽ обслуживание навсегда">Vortex Standard</option>
+                <option value="Vortex Pro" data-icon="⚡" data-sub="Кешбэк 10% + Web3-мост" selected>Vortex Pro</option>
+                <option value="Private Black" data-icon="👑" data-sub="Металл + 15% + Консьерж">Private Black</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="modalStyleSelect">Дизайн карты</label>
+              <select id="modalStyleSelect" class="glass-input custom-glass-select">
+                <option value="Obsidian Dark" data-icon="🌑" data-sub="Матовое тёмное стекло">Obsidian Dark</option>
+                <option value="Cyber Emerald" data-icon="🟢" data-sub="Изумрудный неон">Cyber Emerald</option>
+                <option value="Indigo Aurora" data-icon="🟣" data-sub="Голографический градиент">Indigo Aurora</option>
+                <option value="Silver Titanium" data-icon="⚪" data-sub="Шлифованный белый титан">Silver Titanium</option>
+              </select>
+            </div>
+          </div>
+
+          <label class="ios-checkbox-row">
+            <input type="checkbox" id="clientConsent" checked required>
+            <span class="ios-Checkmark"></span>
+            <span>Согласен с условиями комплексного банковского обслуживания и обработкой персональных данных</span>
+          </label>
+
+          <button type="submit" class="btn btn-primary btn-lg btn-block btn-shimmer" id="submitOrderBtn">
+            <span>Отправить заявку и выпустить карту</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Экран успешного оформления заявки -->
+      <div class="order-success hidden" id="orderSuccessScreen">
+        <div class="success-icon-ring">✓</div>
+        <h3>Заявка одобрена! Счёт зарезервирован</h3>
+        <p id="orderSuccessDetails">
+          Мы отправили СМС с кодом активации виртуальной карты и ссылкой на курьерскую доставку.
+        </p>
+        <div class="success-meta glass-card-mini mono" id="orderSuccessMeta"></div>
+        <button type="button" class="btn btn-primary btn-block" id="resetOrderModalBtn" data-close-modal>
+          Отлично, вернуться на сайт
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       МОДАЛЬНОЕ ОКНО №3: СРАВНЕНИЕ ТАРИФОВ
+       ========================================================================= -->
+  <div class="modal-backdrop" id="tariffsModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="tariffsModalTitle">
+    <div class="modal-window modal-lg glass-card">
+      <button type="button" class="modal-close" data-close-modal aria-label="Закрыть окно">✕</button>
+      <div class="modal-header">
+        <span class="section-eyebrow">Полная спецификация</span>
+        <h3 id="tariffsModalTitle">Сравнение тарифов <span class="text-gradient">Vortex Bank</span></h3>
+      </div>
+
+      <div class="table-responsive">
+        <table class="tariff-table">
+          <thead>
+            <tr>
+              <th>Параметр</th>
+              <th>Standard</th>
+              <th class="highlight-col">Vortex Pro</th>
+              <th>Private Black</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Стоимость обслуживания</td>
+              <td class="mono">0 ₽ безусловно</td>
+              <td class="mono highlight-col">0 ₽ при тратах от 30 000 ₽</td>
+              <td class="mono">0 ₽ при остатке от 500 000 ₽</td>
+            </tr>
+            <tr>
+              <td>Кешбэк в категориях</td>
+              <td class="mono">до 5% (4 категории)</td>
+              <td class="mono highlight-col text-emerald">до 10% (5 категорий)</td>
+              <td class="mono text-emerald">до 15% (6 категорий)</td>
+            </tr>
+            <tr>
+              <td>Накопительный счёт в ₽</td>
+              <td class="mono">16.5% годовых</td>
+              <td class="mono highlight-col">18.0% годовых</td>
+              <td class="mono text-blue">18.5% годовых</td>
+            </tr>
+            <tr>
+              <td>Стейкинг USDT (DeFi-мост)</td>
+              <td class="mono">12.0% APY</td>
+              <td class="mono highlight-col">15.0% APY</td>
+              <td class="mono text-emerald">16.0% APY</td>
+            </tr>
+            <tr>
+              <td>Комиссия крипто-обмена</td>
+              <td class="mono">0.25%</td>
+              <td class="mono highlight-col">0% (до 1 млн ₽/мес)</td>
+              <td class="mono">0% без лимитов</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="modal-footer-bar">
+        <button type="button" class="btn btn-primary" data-open-modal="orderModal">Выбрать тариф и заказать</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Модальное окно №4: Безопасность -->
+  <div class="modal-backdrop" id="securityModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="securityModalTitle">
+    <div class="modal-window glass-card">
+      <button type="button" class="modal-close" data-close-modal aria-label="Закрыть окно">✕</button>
+      <div class="modal-header">
+        <span class="section-eyebrow">Кибербезопасность</span>
+        <h3 id="securityModalTitle">Архитектура защиты <span class="text-gradient">Vortex Shield Tier-4</span></h3>
+      </div>
+      <div class="security-points">
+        <div class="step-card glass-card-mini">
+          <div class="step-num mono">TLS</div>
+          <div class="step-body">
+            <h4>Сквозное шифрование ГОСТ и TLS 1.3</h4>
+            <p>Каждый пакет данных между мобильным клиентом и процессинговым ядром подписывается аппаратным криптоключом смартфона (Secure Enclave).</p>
+          </div>
+        </div>
+        <div class="step-card glass-card-mini">
+          <div class="step-num mono">MPC</div>
+          <div class="step-body">
+            <h4>Технология Multi-Party Computation для крипты</h4>
+            <p>Приватный ключ от вашего криптокошелька разделён на 3 независимых части: ни банк, ни злоумышленник не могут инициировать списание без вашей биометрии FaceID.</p>
+          </div>
+        </div>
+        <div class="step-card glass-card-mini">
+          <div class="step-num mono">24/7</div>
+          <div class="step-body">
+            <h4>AI-Антифрод мониторинг</h4>
+            <p>Нейросеть анализирует 140 параметров транзакции за 8 миллисекунд и мгновенно блокирует подозрительные операции.</p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer-bar">
+        <button type="button" class="btn btn-glass btn-block" data-close-modal>Понятно, закрыть</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
